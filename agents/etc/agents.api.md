@@ -180,6 +180,8 @@ export class Agent<UserData = any> {
     updateOptions(options?: AgentUpdateOptions): Promise<void>;
     // (undocumented)
     updateTools(tools: ToolContextLike<UserData>): Promise<void>;
+    // @internal
+    _usesDefaultSttNode(): boolean;
     // (undocumented)
     get useTtsAlignedTranscript(): boolean | undefined;
     // (undocumented)
@@ -4056,6 +4058,8 @@ class FallbackAdapter_3 extends TTS {
     markUnAvailable(index: number): void;
     readonly maxRetryPerTTS: number;
     readonly recoveryDelayMs: number;
+    // (undocumented)
+    releaseConnections(): Promise<void>;
     // Warning: (ae-forgotten-export) The symbol "TTSStatus" needs to be exported by the entry point index.d.ts
     get status(): TTSStatus[];
     // Warning: (ae-unresolved-link) The @link reference could not be resolved: The package "@livekit/agents" does not have an export "SynthesizeStream"
@@ -7872,6 +7876,8 @@ class StreamAdapter_2 extends TTS {
     // (undocumented)
     label: string;
     // (undocumented)
+    releaseConnections(): Promise<void>;
+    // (undocumented)
     stream(options?: {
         connOptions?: APIConnectOptions;
     }): StreamAdapterWrapper_2;
@@ -9066,6 +9072,7 @@ abstract class TTS extends TTS_base {
     get model(): string;
     get numChannels(): number;
     get provider(): string;
+    releaseConnections(): Promise<void>;
     get sampleRate(): number;
     // @internal
     _setExpressive(enabled: boolean): void;
@@ -9156,6 +9163,7 @@ class TTS_2<TModel extends TTSModels> extends TTS {
     prewarm(): void;
     // (undocumented)
     get provider(): string;
+    releaseConnections(): Promise<void>;
     // (undocumented)
     stream(options?: {
         connOptions?: APIConnectOptions;
@@ -10157,7 +10165,7 @@ export const zipFunctionCallsAndOutputs: (event: FunctionToolsExecutedEvent) => 
 // src/metrics/base.ts:213:3 - (ae-forgotten-export) The symbol "RealtimeModelMetricsInputTokenDetails" needs to be exported by the entry point index.d.ts
 // src/metrics/base.ts:217:3 - (ae-forgotten-export) The symbol "RealtimeModelMetricsOutputTokenDetails" needs to be exported by the entry point index.d.ts
 // src/stt/stt.ts:366:3 - (ae-unresolved-link) The @link reference could not be resolved: The package "@livekit/agents" does not have an export "STT"
-// src/utils.ts:550:3 - (ae-unresolved-link) The @link reference could not be resolved: The package "@livekit/agents" does not have an export "cancelled"
+// src/utils.ts:553:3 - (ae-unresolved-link) The @link reference could not be resolved: The package "@livekit/agents" does not have an export "cancelled"
 // src/voice/agent_session.ts:387:3 - (ae-unresolved-link) The @link reference could not be resolved: This type of declaration is not supported yet by the resolver
 // src/voice/agent_session.ts:1026:5 - (ae-forgotten-export) The symbol "RecordingOptions" needs to be exported by the entry point index.d.ts
 // src/voice/agent_session.ts:1697:5 - (ae-forgotten-export) The symbol "STTError" needs to be exported by the entry point index.d.ts

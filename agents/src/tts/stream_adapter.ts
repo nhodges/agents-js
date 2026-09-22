@@ -41,6 +41,10 @@ export class StreamAdapter extends TTS {
     await super.close();
   }
 
+  override async releaseConnections(): Promise<void> {
+    await this.#tts.releaseConnections();
+  }
+
   synthesize(
     text: string,
     connOptions?: APIConnectOptions,
