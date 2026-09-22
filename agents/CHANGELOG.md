@@ -1,5 +1,29 @@
 # @livekit/agents
 
+## 1.9.1
+
+### Patch Changes
+
+- Add `assemblyai/universal-3-6-pro` to the inference STT model type hints and the word-aligned model set so adaptive interruption gets word timings for it. - [#2550](https://github.com/livekit/agents-js/pull/2550) ([@adrian-cowham](https://github.com/adrian-cowham))
+
+- Set default shutdown reasons for job and worker-initiated shutdowns. - [#1931](https://github.com/livekit/agents-js/pull/1931) ([@rosetta-livekit-bot](https://github.com/apps/rosetta-livekit-bot))
+
+- Report reasoning tokens in usage metrics. `CompletionUsage`, `LLMMetrics` and `RealtimeModelMetrics` gain a `reasoningTokens` field, aggregated into `LLMModelUsage.outputReasoningTokens` and emitted as the `gen_ai.usage.reasoning*` span attributes — matching how the Python framework exposes them. - [#2517](https://github.com/livekit/agents-js/pull/2517) ([@tinalenguyen](https://github.com/tinalenguyen))
+
+  The Gemini Live plugin now maps `usageMetadata.thoughtsTokenCount` onto that field. Gemini counts thinking tokens inside `responseTokenCount`, so `reasoningTokens` is reported alongside `outputTokens` rather than added to it, and is left `undefined` when the provider omits it — a reported zero stays distinguishable from a missing count without deriving it from `totalTokens - inputTokens - outputTokens`.
+
+- Session transports now throw when a message cannot be sent because the transport is closed or the room is disconnected, instead of returning silently. A RemoteSession request over a dead transport fails at once rather than waiting out its timeout, and the session host logs a failed event send with one warning. Matches the Python SessionTransport contract. - [#2482](https://github.com/livekit/agents-js/pull/2482) ([@u9g](https://github.com/u9g))
+
+- LiveKit Inference STT: an interim transcript with no text no longer keeps a finalizing stream open. `xai/stt-1` sends one every second after `session.finalized` for as long as the socket is open, so a stream on it never ended after `endInput()`; it now closes 3 s after the last final like every other model. - [#2546](https://github.com/livekit/agents-js/pull/2546) ([@davidzhao](https://github.com/davidzhao))
+
+- Reset the STT retry budget once a connection attempt outlived the connect timeout, so an idle socket recycled by the provider (Cartesia's `1001 Idle timeout` every ~3 minutes on a silent caller) no longer exhausts `maxRetry` and ends the session. - [#2494](https://github.com/livekit/agents-js/pull/2494) ([@u9g](https://github.com/u9g))
+
+- Stop the STT send loops from retaining every audio frame for the life of a stream, and from stealing the next attempt's first frame. `inference.STT` and the Cartesia, Deepgram and Meta STTs raced each read against one long-lived abort promise; every race appended a reaction to that never-settling promise, and each reaction kept the settled read and its `AudioFrame` alive (nodejs/node#17469) — about 8 MB per minute per stream under continuous speech, until the job hit its memory limit. Reads now go through the input queue's cancellable `next({ signal })`, so a torn-down sender's read is cancelled instead of left parked in the queue, and any remaining race goes through `waitUntilAborted`, which installs and removes its own abort listener per call. `Queue.get` and `AsyncIterableQueue.next` now honour an already-aborted signal even when items are buffered, so a cancelled reader never takes a frame the replacement reader needs. - [#2544](https://github.com/livekit/agents-js/pull/2544) ([@praveen4star](https://github.com/praveen4star))
+
+- Recover the STT stream after an unrecoverable error instead of closing the session on the first one: `AgentSession` now applies `maxUnrecoverableErrors` to `stt_error` (reset by a user transcript) like it does for LLM and TTS, and the STT pipeline recreates its stream after a connection failure. Matches livekit/agents#6418. - [#2494](https://github.com/livekit/agents-js/pull/2494) ([@u9g](https://github.com/u9g))
+
+- Read the agent name from `[agent] name` in `livekit.toml` when neither the `agentName` option nor `LIVEKIT_AGENT_NAME` sets it, and warn when the name is set in code. - [#2504](https://github.com/livekit/agents-js/pull/2504) ([@u9g](https://github.com/u9g))
+
 ## 1.9.0
 
 ### Minor Changes

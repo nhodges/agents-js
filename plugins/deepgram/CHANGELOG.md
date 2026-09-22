@@ -1,5 +1,18 @@
 # @livekit/agents-plugin-deepgram
 
+## 1.9.1
+
+### Patch Changes
+
+- Add `TTSv2`, a Deepgram Flux TTS client for the `/v2/speak` endpoint, alongside the existing Aura `TTS` rather than replacing it. Streaming and batch output are `linear16` only. - [#2514](https://github.com/livekit/agents-js/pull/2514) ([@dg-edcharbeneau](https://github.com/dg-edcharbeneau))
+
+- Detect a silently dropped STT socket instead of hanging. Adds a ping/pong heartbeat to both STT streams, makes the v1 stream observe its connection monitor (`wsMonitor.result`, not `wsMonitor`, which left its retry path unreachable), lets the v2 stream reconnect from a mid-session close, and cancels an attempt's audio read on teardown so a torn-down sender cannot steal frames from the next one. - [#2470](https://github.com/livekit/agents-js/pull/2470) ([@GregHolmes](https://github.com/GregHolmes))
+
+- Stop the STT send loops from retaining every audio frame for the life of a stream, and from stealing the next attempt's first frame. `inference.STT` and the Cartesia, Deepgram and Meta STTs raced each read against one long-lived abort promise; every race appended a reaction to that never-settling promise, and each reaction kept the settled read and its `AudioFrame` alive (nodejs/node#17469) — about 8 MB per minute per stream under continuous speech, until the job hit its memory limit. Reads now go through the input queue's cancellable `next({ signal })`, so a torn-down sender's read is cancelled instead of left parked in the queue, and any remaining race goes through `waitUntilAborted`, which installs and removes its own abort listener per call. `Queue.get` and `AsyncIterableQueue.next` now honour an already-aborted signal even when items are buffered, so a cancelled reader never takes a frame the replacement reader needs. - [#2544](https://github.com/livekit/agents-js/pull/2544) ([@praveen4star](https://github.com/praveen4star))
+
+- Updated dependencies [[`f6ea8df`](https://github.com/livekit/agents-js/commit/f6ea8df234c9f4a992e67908f3f100c956a9acc0), [`f6f9e7a`](https://github.com/livekit/agents-js/commit/f6f9e7ad1614d22c21b935ee4101a727eea1b145), [`21aa476`](https://github.com/livekit/agents-js/commit/21aa4763f2b89506fb1e56f6879b23e41a5bcfa6), [`5287be1`](https://github.com/livekit/agents-js/commit/5287be114b12fb16f0a3eb6ccca4173e6e3eb219), [`40bf9b1`](https://github.com/livekit/agents-js/commit/40bf9b13f3b71fe50076f53609aa63af449737b4), [`b7ad990`](https://github.com/livekit/agents-js/commit/b7ad990c5faa424b31697bd2e868232f81f2bdf5), [`7ab8bd8`](https://github.com/livekit/agents-js/commit/7ab8bd801bc78d3c88c8b50904f1d90e81d976b8), [`b7ad990`](https://github.com/livekit/agents-js/commit/b7ad990c5faa424b31697bd2e868232f81f2bdf5), [`e1b64e4`](https://github.com/livekit/agents-js/commit/e1b64e4c835a56046b6b9d3d94e0d14ccc99708b)]:
+  - @livekit/agents@1.9.1
+
 ## 1.9.0
 
 ### Patch Changes

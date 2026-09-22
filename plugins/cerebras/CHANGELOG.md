@@ -1,5 +1,13 @@
 # @livekit/agents-plugin-cerebras
 
+## 1.9.1
+
+### Patch Changes
+
+- Updated dependencies [[`f6ea8df`](https://github.com/livekit/agents-js/commit/f6ea8df234c9f4a992e67908f3f100c956a9acc0), [`f6f9e7a`](https://github.com/livekit/agents-js/commit/f6f9e7ad1614d22c21b935ee4101a727eea1b145), [`21aa476`](https://github.com/livekit/agents-js/commit/21aa4763f2b89506fb1e56f6879b23e41a5bcfa6), [`4c719a3`](https://github.com/livekit/agents-js/commit/4c719a37e4c4f970f146ef72f41123e8d9b70256), [`5287be1`](https://github.com/livekit/agents-js/commit/5287be114b12fb16f0a3eb6ccca4173e6e3eb219), [`40bf9b1`](https://github.com/livekit/agents-js/commit/40bf9b13f3b71fe50076f53609aa63af449737b4), [`b7ad990`](https://github.com/livekit/agents-js/commit/b7ad990c5faa424b31697bd2e868232f81f2bdf5), [`7ab8bd8`](https://github.com/livekit/agents-js/commit/7ab8bd801bc78d3c88c8b50904f1d90e81d976b8), [`b7ad990`](https://github.com/livekit/agents-js/commit/b7ad990c5faa424b31697bd2e868232f81f2bdf5), [`e1b64e4`](https://github.com/livekit/agents-js/commit/e1b64e4c835a56046b6b9d3d94e0d14ccc99708b)]:
+  - @livekit/agents@1.9.1
+  - @livekit/agents-plugin-openai@1.9.1
+
 ## 1.9.0
 
 ### Patch Changes
