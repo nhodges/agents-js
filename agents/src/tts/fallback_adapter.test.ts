@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import { AudioFrame } from '@livekit/rtc-node';
 import { ReadableStream } from 'node:stream/web';
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { APIError } from '../_exceptions.js';
 import { initializeLogger } from '../log.js';
 import type { APIConnectOptions } from '../types.js';
@@ -118,6 +118,23 @@ class MockTTS extends TTS {
     return new MockSynthesizeStream(this, this.shouldFail, options?.connOptions);
   }
 }
+
+describe('TTS FallbackAdapter releaseIdleConnections', () => {
+  it('forwards to every provider even when one throws', async () => {
+    const primary = new MockTTS('primary');
+    const secondary = new MockTTS('secondary');
+    const primaryRelease = vi
+      .spyOn(primary, 'releaseIdleConnections')
+      .mockRejectedValue(new Error('primary release failed'));
+    const secondaryRelease = vi.spyOn(secondary, 'releaseIdleConnections').mockResolvedValue();
+    const adapter = new FallbackAdapter({ ttsInstances: [primary, secondary] });
+
+    await expect(adapter.releaseIdleConnections()).rejects.toThrow('primary release failed');
+    expect(primaryRelease).toHaveBeenCalledTimes(1);
+    expect(secondaryRelease).toHaveBeenCalledTimes(1);
+    await adapter.close();
+  });
+});
 
 describe('TTS FallbackAdapter', () => {
   beforeAll(() => {
