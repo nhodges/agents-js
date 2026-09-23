@@ -2868,6 +2868,7 @@ export class ConnectionPool<T> {
     invalidate(): void;
     prewarm(): void;
     put(conn: T): void;
+    releaseIdle(): Promise<void>;
     remove(conn: T): void;
     withConnection<R>(fn: (conn: T) => Promise<R>, options?: {
         timeout?: number;
@@ -4059,7 +4060,7 @@ class FallbackAdapter_3 extends TTS {
     readonly maxRetryPerTTS: number;
     readonly recoveryDelayMs: number;
     // (undocumented)
-    releaseConnections(): Promise<void>;
+    releaseIdleConnections(): Promise<void>;
     // Warning: (ae-forgotten-export) The symbol "TTSStatus" needs to be exported by the entry point index.d.ts
     get status(): TTSStatus[];
     // Warning: (ae-unresolved-link) The @link reference could not be resolved: The package "@livekit/agents" does not have an export "SynthesizeStream"
@@ -7876,7 +7877,7 @@ class StreamAdapter_2 extends TTS {
     // (undocumented)
     label: string;
     // (undocumented)
-    releaseConnections(): Promise<void>;
+    releaseIdleConnections(): Promise<void>;
     // (undocumented)
     stream(options?: {
         connOptions?: APIConnectOptions;
@@ -9072,7 +9073,7 @@ abstract class TTS extends TTS_base {
     get model(): string;
     get numChannels(): number;
     get provider(): string;
-    releaseConnections(): Promise<void>;
+    releaseIdleConnections(): Promise<void>;
     get sampleRate(): number;
     // @internal
     _setExpressive(enabled: boolean): void;
@@ -9163,7 +9164,7 @@ class TTS_2<TModel extends TTSModels> extends TTS {
     prewarm(): void;
     // (undocumented)
     get provider(): string;
-    releaseConnections(): Promise<void>;
+    releaseIdleConnections(): Promise<void>;
     // (undocumented)
     stream(options?: {
         connOptions?: APIConnectOptions;
